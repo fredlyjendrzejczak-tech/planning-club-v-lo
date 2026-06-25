@@ -5,7 +5,9 @@ const crypto = require("crypto");
 
 const PORT = Number(process.env.PORT || 8788);
 const ROOT = __dirname;
-const PUBLIC_DIR = path.join(ROOT, "public");
+const PUBLIC_DIR = fs.existsSync(path.join(ROOT, "public", "index.html"))
+  ? path.join(ROOT, "public")
+  : ROOT;
 const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, "data");
 const DATA_FILE = path.join(DATA_DIR, "sessions.json");
 
