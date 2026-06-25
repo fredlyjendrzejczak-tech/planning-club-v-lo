@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: planning-club-velo
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATA_DIR
+        value: /var/data
+    disk:
+      name: planning-club-velo-data
+      mountPath: /var/data
+      sizeGB: 1

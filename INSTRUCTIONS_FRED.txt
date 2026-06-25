@@ -1,0 +1,19 @@
+FRED - DOSSIER A ENVOYER SUR GITHUB
+
+Tu es au bon endroit.
+
+Sur GitHub :
+
+1. Clique sur "uploading an existing file".
+2. Ouvre ce dossier : A_ENVOYER_SUR_GITHUB_PLANNING_CLUB_VELO
+3. Selectionne tout ce qu'il y a dedans :
+   - public
+   - data
+   - server.js
+   - package.json
+   - render.yaml
+   - README.md
+4. Glisse tout dans GitHub.
+5. Clique sur "Commit changes".
+
+Apres ca, on passera a Render pour creer le vrai lien internet partageable.

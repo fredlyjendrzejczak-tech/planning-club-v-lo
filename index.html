@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Planning Club Vélo Partagé</title>
+<style>
+:root{
+  --blue:#145cff;
+  --blue-dark:#102a5c;
+  --pink:#ec4899;
+  --pink-dark:#be185d;
+  --ink:#16233f;
+  --muted:#667085;
+  --line:#dbe5f5;
+  --soft:#f7faff;
+  --white:#fff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,#f8fbff,#edf6ff 48%,#fff3fa);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{max-width:1440px;margin:0 auto;padding:24px}
+.topbar{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}
+h1{margin:0;color:var(--blue-dark);font-size:36px;line-height:1}
+.subtitle{margin:6px 0 0;color:var(--muted);font-weight:700}
+.share-box{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px 14px;min-width:280px;box-shadow:0 12px 30px rgba(16,42,92,.08)}
+.share-box strong{display:block;color:var(--blue-dark)}
+.share-box span{display:block;margin-top:4px;color:var(--muted);font-size:13px;word-break:break-all}
+.nav-row{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:18px}
+.tabs,.nav-buttons{display:flex;gap:8px;flex-wrap:wrap}
+button{border:1px solid var(--line);border-radius:10px;background:#fff;color:#2747c7;font-weight:950;padding:10px 14px;cursor:pointer;font:inherit}
+button.primary,.tabs button.active{background:linear-gradient(90deg,var(--blue),var(--pink));border-color:transparent;color:#fff;box-shadow:0 10px 24px rgba(20,92,255,.18)}
+button.danger{background:#fff1f8;color:var(--pink-dark)}
+.week-title{font-size:30px;font-weight:950;color:var(--blue-dark);margin:0 0 4px}
+.week-subtitle{color:var(--muted);font-weight:750;margin:0 0 16px}
+.week-board{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.day{min-height:360px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:pointer;transition:border .18s ease,box-shadow .18s ease,background .18s ease}
+.day.selected{border:3px solid var(--pink);background:#fff7fc;box-shadow:0 14px 34px rgba(236,72,153,.14)}
+.day.today:not(.selected){border-color:#9cc6ff}
+.day-head{display:flex;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #e8eef8;font-weight:950;color:var(--blue-dark)}
+.day-date{color:#7b8497}
+.day-body{padding:12px;display:grid;gap:9px}
+.free{border:1px dashed #bcd7ff;border-radius:12px;background:#f8fbff;color:#6b7280;text-align:center;font-weight:850;padding:20px 10px}
+.session-pill{border:1px solid #dce7f8;border-radius:12px;background:#fbfdff;padding:10px}
+.session-pill strong{display:block;color:var(--blue-dark);font-size:13px}
+.session-pill span{display:block;color:#65718a;font-size:12px;margin-top:3px}
+.workspace{display:grid;grid-template-columns:minmax(310px,.82fr) minmax(520px,1.18fr);gap:16px;margin-top:18px}
+.panel{border:1px solid var(--line);border-radius:14px;background:#fff;padding:18px;box-shadow:0 12px 30px rgba(16,42,92,.07)}
+.panel h2{margin:0;color:var(--blue-dark)}
+.panel .hint{margin:4px 0 16px;color:var(--muted);font-weight:750}
+.session-list{display:grid;gap:10px}
+.session-card{border:1px solid #e8eef8;border-radius:12px;background:#fbfdff;padding:12px}
+.session-card strong{display:block;color:var(--blue-dark)}
+.session-card p{margin:5px 0;color:#344054;font-size:13px}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.field{margin-bottom:14px}
+.field label{display:block;margin:0 0 7px;font-weight:900;color:#344054}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;font:inherit;color:var(--ink);background:#fbfdff}
+.field textarea{min-height:110px;resize:vertical}
+.result-panel{border:1px solid var(--line);border-radius:14px;padding:14px;background:linear-gradient(135deg,#f8fbff,#fff7fc)}
+.result-panel h3{margin:0 0 12px;color:var(--blue-dark)}
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+.message{min-height:20px;color:var(--pink-dark);font-weight:850}
+@media(max-width:1100px){
+  .week-board{grid-template-columns:repeat(2,1fr)}
+  .workspace{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:680px){
+  .app{padding:14px}
+  .topbar,.nav-row{display:block}
+  .share-box{margin-top:12px}
+  .week-board,.form-grid,.result-grid{grid-template-columns:1fr}
+  .day{min-height:180px}
+  h1{font-size:30px}
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="topbar">
+    <div>
+      <h1>Planning Club Vélo Partagé</h1>
+      <p class="subtitle">Paray-le-Monial · planning commun pour l'équipe</p>
+    </div>
+    <div class="share-box">
+      <strong>Lien pour les collègues</strong>
+      <span id="shareLink">Ouvre cette application sur le Mac de Fred, puis partage l'adresse réseau.</span>
+    </div>
+  </header>
+
+  <section class="nav-row">
+    <div>
+      <p class="week-title" id="weekTitle">Semaine</p>
+      <p class="week-subtitle">Vue semaine, ajout rapide et suivi des séances</p>
+    </div>
+    <div class="nav-buttons">
+      <button type="button" id="prevWeek">Précédent</button>
+      <button class="primary" type="button" id="todayWeek">Aujourd'hui</button>
+      <button type="button" id="nextWeek">Suivant</button>
+    </div>
+  </section>
+
+  <div class="tabs">
+    <button class="active" type="button">Semaine</button>
+    <button type="button">Mois</button>
+  </div>
+
+  <section class="week-board" id="weekBoard"></section>
+
+  <section class="workspace">
+    <article class="panel">
+      <h2 id="selectedTitle">Séances du jour</h2>
+      <p class="hint" id="selectedCount">0 séance ce jour</p>
+      <div class="session-list" id="selectedSessions"></div>
+    </article>
+
+    <article class="panel">
+      <h2>Ajouter une séance ce jour</h2>
+      <p class="hint">Groupe, heure, descriptif, commentaire et résultats</p>
+      <div class="form-grid">
+        <div class="field">
+          <label for="client">Groupe / public</label>
+          <input id="client" placeholder="Seniors, enfants, ados...">
+        </div>
+        <div class="field">
+          <label for="date">Date</label>
+          <input id="date" type="date">
+        </div>
+        <div class="field">
+          <label for="time">Heure</label>
+          <input id="time" type="time">
+        </div>
+        <div class="field">
+          <label for="duration">Durée</label>
+          <input id="duration" type="number" min="0" step="5" placeholder="60">
+        </div>
+        <div class="field">
+          <label for="activity">Type d'activité</label>
+          <select id="activity">
+            <option>Sport santé</option>
+            <option>Vélo d'appartement</option>
+            <option>Gym douce</option>
+            <option>VTT</option>
+            <option>Route</option>
+            <option>Baby vélo</option>
+            <option>Décrassage</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="status">Statut</label>
+          <select id="status">
+            <option>Planifiée</option>
+            <option>Réalisée</option>
+            <option>À modifier</option>
+            <option>Annulée</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="coach">Encadrant</label>
+          <select id="coach">
+            <option value="">À renseigner</option>
+            <option>Arthur</option>
+            <option>Florian</option>
+            <option>Arthur et Florian</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="intensity">Intensité</label>
+          <select id="intensity">
+            <option value="">À renseigner</option>
+            <option value="1">1 / 10 - Très facile</option>
+            <option value="2">2 / 10 - Facile</option>
+            <option value="3">3 / 10 - Modéré léger</option>
+            <option value="4">4 / 10 - Modéré</option>
+            <option value="5">5 / 10 - Soutenu</option>
+            <option value="6">6 / 10 - Soutenu +</option>
+            <option value="7">7 / 10 - Difficile</option>
+            <option value="8">8 / 10 - Très difficile</option>
+            <option value="9">9 / 10 - Quasi maximal</option>
+            <option value="10">10 / 10 - Maximal</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="repeatWeeks">Répétition</label>
+          <input id="repeatWeeks" type="number" min="1" step="1" value="1">
+        </div>
+      </div>
+      <div class="field">
+        <label for="goal">But / objectif</label>
+        <input id="goal" placeholder="Objectif principal de la séance">
+      </div>
+      <div class="field">
+        <label for="material">Matériel</label>
+        <input id="material" placeholder="Vélos, plots, tapis, salle...">
+      </div>
+      <div class="field">
+        <label for="instructions">Descriptif / consignes</label>
+        <textarea id="instructions" placeholder="Déroulé, sécurité, adaptations, retour au calme..."></textarea>
+      </div>
+      <div class="field">
+        <label for="comment">Commentaire de la séance</label>
+        <textarea id="comment" placeholder="Ressenti, comportement du groupe, bilan, adaptations à prévoir..."></textarea>
+      </div>
+      <div class="result-panel">
+        <h3>Résultat de séance</h3>
+        <div class="result-grid">
+          <div class="field"><label for="resultTime">Temps</label><input id="resultTime" type="number" min="0" step="1" placeholder="min"></div>
+          <div class="field"><label for="resultDistance">Distance</label><input id="resultDistance" type="number" min="0" step="0.01" placeholder="km"></div>
+          <div class="field"><label for="resultProgram">Programme</label><input id="resultProgram" type="number" min="0" step="1" placeholder="n°"></div>
+          <div class="field"><label for="resultResistance">Résistance</label><input id="resultResistance" type="number" min="0" step="1" placeholder="niveau"></div>
+        </div>
+      </div>
+      <p class="message" id="message"></p>
+      <div class="actions">
+        <button type="button" id="resetForm">Vider</button>
+        <button class="primary" type="button" id="saveSession">Enregistrer</button>
+      </div>
+    </article>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
