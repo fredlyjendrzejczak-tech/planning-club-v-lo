@@ -3,184 +3,583 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Planning Club Vélo Partagé</title>
+<title>Planning hebdomadaire - Club de vélo Paray-le-Monial</title>
 <style>
 :root{
-  --blue:#145cff;
-  --blue-dark:#102a5c;
+  --navy:#102a5c;
+  --blue:#0f6fff;
+  --blue-dark:#0646a8;
   --pink:#ec4899;
   --pink-dark:#be185d;
+  --sky:#eaf4ff;
+  --blush:#fff1f8;
   --ink:#16233f;
-  --muted:#667085;
-  --line:#dbe5f5;
-  --soft:#f7faff;
-  --white:#fff;
+  --muted:#65718a;
+  --line:#d9e5f6;
+  --soft:#f6f9ff;
+  --paper:#fff;
 }
 *{box-sizing:border-box}
-body{margin:0;background:linear-gradient(135deg,#f8fbff,#edf6ff 48%,#fff3fa);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-.app{max-width:1440px;margin:0 auto;padding:24px}
-.topbar{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}
-h1{margin:0;color:var(--blue-dark);font-size:36px;line-height:1}
-.subtitle{margin:6px 0 0;color:var(--muted);font-weight:700}
-.share-box{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px 14px;min-width:280px;box-shadow:0 12px 30px rgba(16,42,92,.08)}
-.share-box strong{display:block;color:var(--blue-dark)}
-.share-box span{display:block;margin-top:4px;color:var(--muted);font-size:13px;word-break:break-all}
-.nav-row{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:18px}
-.tabs,.nav-buttons{display:flex;gap:8px;flex-wrap:wrap}
-button{border:1px solid var(--line);border-radius:10px;background:#fff;color:#2747c7;font-weight:950;padding:10px 14px;cursor:pointer;font:inherit}
-button.primary,.tabs button.active{background:linear-gradient(90deg,var(--blue),var(--pink));border-color:transparent;color:#fff;box-shadow:0 10px 24px rgba(20,92,255,.18)}
-button.danger{background:#fff1f8;color:var(--pink-dark)}
-.week-title{font-size:30px;font-weight:950;color:var(--blue-dark);margin:0 0 4px}
-.week-subtitle{color:var(--muted);font-weight:750;margin:0 0 16px}
-.week-board{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
-.day{min-height:360px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:pointer;transition:border .18s ease,box-shadow .18s ease,background .18s ease}
-.day.selected{border:3px solid var(--pink);background:#fff7fc;box-shadow:0 14px 34px rgba(236,72,153,.14)}
-.day.today:not(.selected){border-color:#9cc6ff}
-.day-head{display:flex;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #e8eef8;font-weight:950;color:var(--blue-dark)}
-.day-date{color:#7b8497}
-.day-body{padding:12px;display:grid;gap:9px}
-.free{border:1px dashed #bcd7ff;border-radius:12px;background:#f8fbff;color:#6b7280;text-align:center;font-weight:850;padding:20px 10px}
-.session-pill{border:1px solid #dce7f8;border-radius:12px;background:#fbfdff;padding:10px}
-.session-pill.planned{width:100%;text-align:left;background:linear-gradient(135deg,#f8fbff,#fff7fc);border-color:#cfe0ff;color:var(--ink);box-shadow:none}
-.session-pill.planned:hover{border-color:var(--pink);box-shadow:inset 4px 0 0 var(--pink)}
-.session-pill.detailed{background:#f3f8ff;border-color:#bcd7ff}
-.session-pill strong{display:block;color:var(--blue-dark);font-size:13px}
-.session-pill span{display:block;color:#65718a;font-size:12px;margin-top:3px}
-.workspace{display:grid;grid-template-columns:minmax(310px,.82fr) minmax(520px,1.18fr);gap:16px;margin-top:18px}
-.panel{border:1px solid var(--line);border-radius:14px;background:#fff;padding:18px;box-shadow:0 12px 30px rgba(16,42,92,.07)}
-.panel h2{margin:0;color:var(--blue-dark)}
-.panel .hint{margin:4px 0 16px;color:var(--muted);font-weight:750}
-.session-list{display:grid;gap:10px}
-.session-card{border:1px solid #e8eef8;border-radius:12px;background:#fbfdff;padding:12px}
-.session-card.planned-card{background:linear-gradient(135deg,#f8fbff,#fff7fc);border-color:#cfe0ff}
-.session-card strong{display:block;color:var(--blue-dark)}
-.session-card p{margin:5px 0;color:#344054;font-size:13px}
-.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.field{margin-bottom:14px}
-.field label{display:block;margin:0 0 7px;font-weight:900;color:#344054}
-.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;font:inherit;color:var(--ink);background:#fbfdff}
-.field textarea{min-height:110px;resize:vertical}
-.result-panel{border:1px solid var(--line);border-radius:14px;padding:14px;background:linear-gradient(135deg,#f8fbff,#fff7fc)}
-.result-panel h3{margin:0 0 12px;color:var(--blue-dark)}
-.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
-.message{min-height:20px;color:var(--pink-dark);font-weight:850}
-@media(max-width:1100px){
+body{margin:0;background:linear-gradient(135deg,#f8fbff 0%,#edf6ff 46%,#fff3fa 100%);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+.page{max-width:1180px;margin:24px auto;background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.78);border-radius:18px;overflow:hidden;box-shadow:0 22px 70px rgba(16,42,92,.16)}
+header{position:relative;padding:38px 40px;background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue) 48%,var(--pink) 100%);color:#fff;overflow:hidden}
+header:before{content:"";position:absolute;inset:auto -90px -130px auto;width:330px;height:330px;border-radius:50%;background:rgba(255,255,255,.18)}
+header:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.16),transparent 38%)}
+header>*{position:relative;z-index:1}
+h1{font-size:42px;line-height:1;margin:0 0 10px;letter-spacing:0}
+header p{margin:0;color:rgba(255,255,255,.9);font-size:16px;font-weight:650}
+section{padding:30px 40px;border-bottom:1px solid var(--line)}
+h2{font-size:24px;margin:0 0 16px;color:var(--navy)}
+h2:after{content:"";display:block;width:58px;height:4px;margin-top:8px;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--pink))}
+h3{font-size:18px;margin:0 0 10px;color:var(--navy)}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.tag{display:inline-flex;align-items:center;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:850;border:1px solid var(--line);background:#fff;color:#334155;white-space:nowrap}
+.legend .tag{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.32);backdrop-filter:blur(8px)}
+.competition{background:#eaf2ff;color:#0b4eb3;border-color:#b9d5ff}
+.sante{background:#fff1f8;color:#be185d;border-color:#fbcfe8}
+.ecole{background:#eef6ff;color:#075db8;border-color:#bfdbfe}
+.structure{background:#f8fbff;color:#314a71;border-color:#d7e4f7}
+.senior{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.enfant{background:#fff7fb;color:#db2777;border-color:#f9a8d4}
+.ado{background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe}
+.staff-a{background:#0f6fff;color:#fff;border-color:#0f6fff;box-shadow:0 8px 18px rgba(15,111,255,.25)}
+.staff-b{background:#ec4899;color:#fff;border-color:#ec4899;box-shadow:0 8px 18px rgba(236,72,153,.24)}
+.confirm{background:#fff1f8;color:#be185d;border-color:#fbcfe8}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.day{border:1px solid rgba(217,229,246,.95);border-radius:12px;background:#fff;overflow:hidden;min-height:260px;box-shadow:0 10px 26px rgba(16,42,92,.06)}
+.day-title{padding:13px 14px;background:linear-gradient(90deg,#eaf4ff,#fff1f8);border-bottom:1px solid var(--line);font-weight:950;color:var(--navy)}
+.slot{position:relative;padding:13px 14px;border-bottom:1px solid #e8eef8;cursor:pointer;transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
+.slot:hover{background:linear-gradient(90deg,#f7fbff,#fff7fc);box-shadow:inset 4px 0 0 var(--pink)}
+.slot:focus{outline:3px solid rgba(15,111,255,.24);outline-offset:-3px}
+.slot:last-child{border-bottom:0}
+.time{font-weight:950;color:var(--blue-dark);margin-bottom:4px}
+.activity{font-weight:850;color:#26364f}
+.meta{color:var(--muted);font-size:13px;margin-top:4px}
+.staff-line{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.detail-state{display:inline-flex;align-items:center;margin-top:8px;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900;background:#f8fbff;color:#50617d;border:1px dashed #cbd8eb}
+.slot.has-detail .detail-state{background:linear-gradient(90deg,var(--blue),var(--pink));color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(15,111,255,.18)}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.card{border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);padding:17px;box-shadow:0 10px 26px rgba(16,42,92,.05)}
+.card ul{margin:8px 0 0;padding-left:18px;color:#344054}
+.card li{margin:5px 0}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top;font-size:14px}
+th{background:linear-gradient(90deg,#eaf4ff,#fff1f8);color:#314a71;text-transform:uppercase;font-size:12px}
+tbody tr:nth-child(even){background:#fbfdff}
+.note{border-left:4px solid var(--pink);background:linear-gradient(90deg,#fff1f8,#f8fbff);border-radius:0 10px 10px 0;padding:12px 14px;color:#334155}
+footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color:var(--muted);font-size:13px}
+.modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(16,35,63,.48);z-index:10}
+.modal-backdrop.open{display:flex}
+.session-modal{width:min(720px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 28px 90px rgba(16,35,63,.32);border:1px solid rgba(255,255,255,.8)}
+.modal-head{padding:22px 24px;background:linear-gradient(135deg,var(--blue-dark),var(--blue) 52%,var(--pink));color:#fff}
+.modal-head h2{margin:0;color:#fff;font-size:26px}
+.modal-head h2:after{display:none}
+.modal-head p{margin:6px 0 0;color:rgba(255,255,255,.88);font-weight:750}
+.modal-body{padding:22px 24px}
+.field{margin-bottom:16px}
+.field label{display:block;margin:0 0 7px;font-weight:900;color:var(--navy)}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 13px;font:inherit;color:var(--ink);background:#fbfdff}
+.field textarea{min-height:130px;resize:vertical}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.result-panel{margin-top:4px;border:1px solid var(--line);border-radius:14px;padding:16px;background:linear-gradient(135deg,#f8fbff,#fff7fc)}
+.result-panel h3{margin:0 0 12px;font-size:17px}
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.result-grid .field{margin-bottom:0}
+.result-grid input{text-align:center;font-weight:900}
+.blank-planner{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:0 14px 34px rgba(16,42,92,.08);overflow:hidden}
+.blank-planner-head{padding:18px 20px;background:linear-gradient(90deg,#eaf4ff,#fff1f8);border-bottom:1px solid var(--line)}
+.blank-planner-head h3{margin:0;color:var(--navy)}
+.blank-planner-head p{margin:5px 0 0;color:var(--muted);font-weight:700}
+.blank-planner-body{padding:20px}
+.day-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.day-tab{border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--blue-dark);font-weight:950;padding:9px 12px;cursor:pointer}
+.day-tab.active{background:linear-gradient(90deg,var(--blue),var(--pink));color:#fff;border-color:transparent;box-shadow:0 10px 24px rgba(15,111,255,.18)}
+.blank-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-top:16px}
+.inline-message{min-height:20px;margin:10px 0 0;color:var(--pink-dark);font-weight:850}
+.saved-sessions{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.saved-day{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.saved-day h4{margin:0;padding:11px 13px;background:linear-gradient(90deg,#f8fbff,#fff7fc);color:var(--navy)}
+.saved-day-list{padding:12px;display:grid;gap:10px}
+.saved-session{border:1px solid #e8eef8;border-radius:10px;padding:10px;background:#fbfdff}
+.saved-session strong{display:block;color:var(--blue-dark);margin-bottom:2px}
+.saved-session p{margin:4px 0;color:#344054;font-size:13px}
+.saved-session button{margin-top:7px;border:0;border-radius:999px;background:#fff1f8;color:var(--pink-dark);font-weight:900;padding:6px 10px;cursor:pointer}
+.empty-state{padding:14px;color:var(--muted);font-weight:750}
+.coach-calendar{padding:2px 0 0}
+.calendar-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}
+.calendar-title h3{margin:0;color:var(--navy);font-size:28px}
+.calendar-title p{margin:2px 0 0;color:var(--muted);font-weight:750}
+.calendar-nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.calendar-nav button,.view-toggle button{border:1px solid var(--line);border-radius:10px;background:#fff;color:#2747c7;font-weight:950;padding:10px 14px;cursor:pointer}
+.view-toggle{display:flex;gap:8px;margin-bottom:14px}
+.view-toggle button.active{background:#2f55d9;color:#fff;border-color:#2f55d9}
+.week-board{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.week-day{min-height:330px;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden;cursor:pointer;transition:border .18s ease,background .18s ease,box-shadow .18s ease}
+.week-day.selected{border:2px solid var(--pink);background:#fff6fb;box-shadow:0 12px 30px rgba(236,72,153,.12)}
+.week-day.today:not(.selected){border-color:#9fc7ff}
+.week-day-head{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid #e8eef8;color:var(--navy);font-weight:950}
+.week-day-date{color:#7b8497}
+.week-day-content{padding:12px;display:grid;gap:8px}
+.free-box{border:1px dashed #bcd7ff;border-radius:10px;background:#f8fbff;color:#6b7280;text-align:center;font-weight:850;padding:18px 8px}
+.calendar-session{border:1px solid #dce7f8;border-radius:10px;background:#fbfdff;padding:9px}
+.calendar-session strong{display:block;color:var(--blue-dark);font-size:13px}
+.calendar-session span{display:block;color:#65718a;font-size:12px;margin-top:2px}
+.session-workspace{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(420px,1.15fr);gap:14px;margin-top:18px}
+.selected-day-panel,.add-day-panel{border:1px solid var(--line);border-radius:12px;background:#fff;padding:16px}
+.selected-day-panel h3,.add-day-panel h3{margin:0;color:var(--navy)}
+.selected-day-panel p,.add-day-panel p{margin:2px 0 14px;color:var(--muted);font-weight:750}
+.day-session-list{display:grid;gap:10px}
+.day-session-card{border:1px solid #e8eef8;border-radius:10px;background:#fbfdff;padding:11px}
+.day-session-card strong{display:block;color:var(--blue-dark)}
+.day-session-card p{margin:5px 0;color:#344054;font-size:13px}
+.day-session-card button{margin-top:7px;border:0;border-radius:999px;background:#fff1f8;color:var(--pink-dark);font-weight:900;padding:6px 10px;cursor:pointer}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;padding:0 24px 24px}
+.app-btn{border:0;border-radius:999px;padding:11px 16px;font-weight:950;cursor:pointer}
+.app-btn.primary{background:linear-gradient(90deg,var(--blue),var(--pink));color:#fff;box-shadow:0 10px 24px rgba(15,111,255,.2)}
+.app-btn.secondary{background:#eef4ff;color:var(--blue-dark)}
+.app-btn.danger{background:#fff1f8;color:var(--pink-dark)}
+.saved-message{min-height:20px;margin:0 24px 16px;color:var(--pink-dark);font-weight:850}
+@media(max-width:1000px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .detail-grid{grid-template-columns:1fr}
+  .saved-sessions{grid-template-columns:repeat(2,1fr)}
   .week-board{grid-template-columns:repeat(2,1fr)}
-  .workspace{grid-template-columns:1fr}
-  .form-grid{grid-template-columns:repeat(2,1fr)}
+  .session-workspace{grid-template-columns:1fr}
 }
-@media(max-width:680px){
-  .app{padding:14px}
-  .topbar,.nav-row{display:block}
-  .share-box{margin-top:12px}
-  .week-board,.form-grid,.result-grid{grid-template-columns:1fr}
-  .day{min-height:180px}
+@media(max-width:640px){
+  .page{margin:0}
+  header,section,footer{padding:22px}
+  .grid{grid-template-columns:1fr}
   h1{font-size:30px}
+  .modal-head,.modal-body,.modal-actions{padding-left:18px;padding-right:18px}
+  .form-grid,.result-grid{grid-template-columns:1fr}
+  .saved-sessions{grid-template-columns:1fr}
+  .calendar-top{display:block}
+  .calendar-nav{justify-content:flex-start;margin-top:12px}
+  .week-board{grid-template-columns:1fr}
+  .week-day{min-height:170px}
+}
+@media print{
+  body{background:#fff}
+  .page{margin:0;max-width:none;box-shadow:none}
+  section{break-inside:avoid}
 }
 </style>
 </head>
 <body>
-<main class="app">
-  <header class="topbar">
-    <div>
-      <h1>Planning Club Vélo Partagé</h1>
-      <p class="subtitle">Paray-le-Monial · planning commun pour l'équipe</p>
-    </div>
-    <div class="share-box">
-      <strong>Lien pour les collègues</strong>
-      <span id="shareLink">Ouvre cette application sur le Mac de Fred, puis partage l'adresse réseau.</span>
+<main class="page">
+  <header>
+    <h1>Planning hebdomadaire</h1>
+    <p>Club de vélo - Paray-le-Monial · Pôle compétition, école de vélo et sport santé</p>
+    <div class="legend">
+      <span class="tag competition">Compétition</span>
+      <span class="tag sante">Sport santé</span>
+      <span class="tag ecole">École de vélo</span>
+      <span class="tag structure">Structure / établissement</span>
+      <span class="tag senior">Seniors</span>
+      <span class="tag enfant">Enfants</span>
+      <span class="tag ado">Ados</span>
+      <span class="tag staff-a">Arthur</span>
+      <span class="tag staff-b">Florian</span>
+      <span class="tag confirm">À préciser</span>
     </div>
   </header>
 
-  <section class="nav-row">
-    <div>
-      <p class="week-title" id="weekTitle">Semaine</p>
-      <p class="week-subtitle">Vue semaine, ajout rapide et suivi des séances</p>
-    </div>
-    <div class="nav-buttons">
-      <button type="button" id="prevWeek">Précédent</button>
-      <button class="primary" type="button" id="todayWeek">Aujourd'hui</button>
-      <button type="button" id="nextWeek">Suivant</button>
+  <section>
+    <h2>Vue semaine</h2>
+    <div class="grid">
+      <article class="day">
+        <div class="day-title">Lundi</div>
+        <div class="slot">
+          <div class="time">9h30 - 11h30</div>
+          <div class="activity">Bethléem</div>
+          <div class="meta"><span class="tag structure">Structure</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">10h00 - 11h00</div>
+          <div class="activity">Villa</div>
+          <div class="meta"><span class="tag structure">Structure</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-b">Florian</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">14h00 - 17h00</div>
+          <div class="activity">FAM</div>
+          <div class="meta"><span class="tag structure">Structure</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span> <span class="tag staff-b">Florian</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">19h00 - 20h00</div>
+          <div class="activity">Sport santé</div>
+          <div class="meta"><span class="tag sante">Sport santé</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span></div>
+        </div>
+      </article>
+
+      <article class="day">
+        <div class="day-title">Mardi</div>
+        <div class="slot">
+          <div class="time">9h00 - 12h00</div>
+          <div class="activity">Sport santé</div>
+          <div class="meta"><span class="tag sante">Sport santé</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-b">Florian</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">14h00 - 17h00</div>
+          <div class="activity">Baby vélo</div>
+          <div class="meta"><span class="tag ecole">École de vélo</span> <span class="tag enfant">Enfants</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span> <span class="tag staff-b">Florian</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">14h00 - 17h00</div>
+          <div class="activity">Sport santé</div>
+          <div class="meta"><span class="tag sante">Sport santé</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span></div>
+        </div>
+      </article>
+
+      <article class="day">
+        <div class="day-title">Mercredi</div>
+        <div class="slot">
+          <div class="time">10h00 - 12h00</div>
+          <div class="activity">U7 / U9 VTT</div>
+          <div class="meta"><span class="tag ecole">École de vélo</span> <span class="tag enfant">Enfants</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">10h00 - 12h00</div>
+          <div class="activity">U9 / U11 route</div>
+          <div class="meta"><span class="tag ecole">École de vélo</span> <span class="tag enfant">Enfants</span></div>
+          <div class="staff-line"><span class="tag staff-b">Florian</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">14h00 - 17h00</div>
+          <div class="activity">École de vélo</div>
+          <div class="meta">U13 / U15 · U15 / U17 <br><span class="tag ecole">École de vélo</span> <span class="tag competition">Compétition</span> <span class="tag ado">Ados</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span> <span class="tag staff-b">Florian</span></div>
+        </div>
+      </article>
+
+      <article class="day">
+        <div class="day-title">Jeudi</div>
+        <div class="slot">
+          <div class="time">9h00 - 11h30</div>
+          <div class="activity">Vélo d'appartement</div>
+          <div class="meta"><span class="tag sante">Sport santé</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">14h00 - 16h00</div>
+          <div class="activity">Sport santé - gym douce</div>
+          <div class="meta"><span class="tag sante">Sport santé</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-b">Florian</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">15h00 - 17h00</div>
+          <div class="activity">Verneuil</div>
+          <div class="meta"><span class="tag structure">Structure</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">17h30 - 18h30</div>
+          <div class="activity">Sport santé</div>
+          <div class="meta"><span class="tag sante">Sport santé</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span></div>
+        </div>
+      </article>
+
+      <article class="day">
+        <div class="day-title">Vendredi</div>
+        <div class="slot">
+          <div class="time">10h00 - 12h00</div>
+          <div class="activity">Vélo d'appartement</div>
+          <div class="meta"><span class="tag sante">Sport santé</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-b">Florian</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">14h00 - 16h00</div>
+          <div class="activity">Sport santé - gym douce</div>
+          <div class="meta"><span class="tag sante">Sport santé</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span></div>
+        </div>
+      </article>
+
+      <article class="day">
+        <div class="day-title">Samedi</div>
+        <div class="slot">
+          <div class="time">9h30 - 11h30</div>
+          <div class="activity">VTT U13 et +</div>
+          <div class="meta"><span class="tag ecole">École de vélo</span> <span class="tag competition">Compétition</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-b">Florian</span></div>
+        </div>
+        <div class="slot">
+          <div class="time">16h30 - 17h00</div>
+          <div class="activity">Décrassage</div>
+          <div class="meta"><span class="tag sante">Récupération</span> <span class="tag senior">Seniors</span></div>
+          <div class="staff-line"><span class="tag staff-a">Arthur</span></div>
+        </div>
+      </article>
     </div>
   </section>
 
-  <div class="tabs">
-    <button class="active" type="button">Semaine</button>
-    <button type="button">Mois</button>
-  </div>
+  <section>
+    <h2>Planning des séances</h2>
+    <div class="coach-calendar">
+      <div class="calendar-top">
+        <div class="calendar-title">
+          <h3 id="calendarWeekTitle">Semaine</h3>
+          <p>Vue semaine, ajout rapide et séance jour par jour</p>
+        </div>
+        <div class="calendar-nav">
+          <button type="button" id="prevWeek">Précédent</button>
+          <button type="button" id="todayWeek">Aujourd'hui</button>
+          <button type="button" id="nextWeek">Suivant</button>
+        </div>
+      </div>
+      <div class="view-toggle">
+        <button class="active" type="button">Semaine</button>
+        <button type="button">Mois</button>
+      </div>
+      <div class="week-board" id="weekBoard"></div>
 
-  <section class="week-board" id="weekBoard"></section>
+      <div class="session-workspace">
+        <article class="selected-day-panel">
+          <h3 id="selectedDayTitle">Séances du jour</h3>
+          <p id="selectedDayCount">0 séance ce jour</p>
+          <div class="day-session-list" id="selectedDaySessions"></div>
+        </article>
 
-  <section class="workspace">
-    <article class="panel">
-      <h2 id="selectedTitle">Séances du jour</h2>
-      <p class="hint" id="selectedCount">0 séance ce jour</p>
-      <div class="session-list" id="selectedSessions"></div>
-    </article>
+        <article class="add-day-panel">
+          <h3>Ajouter une séance ce jour</h3>
+          <p>Groupe, heure, type et descriptif</p>
+          <div class="form-grid">
+            <div class="field">
+              <label for="blankClient">Groupe / public</label>
+              <input id="blankClient" type="text" placeholder="Exemple : seniors, enfants, ados">
+            </div>
+            <div class="field">
+              <label for="blankDate">Date</label>
+              <input id="blankDate" type="date">
+            </div>
+            <div class="field">
+              <label for="blankTime">Heure</label>
+              <input id="blankTime" type="time">
+            </div>
+            <div class="field">
+              <label for="blankDuration">Durée</label>
+              <input id="blankDuration" type="number" min="0" step="5" inputmode="numeric" placeholder="60">
+            </div>
+            <div class="field">
+              <label for="blankActivity">Type d'activité</label>
+              <select id="blankActivity">
+                <option value="Sport santé">Sport santé</option>
+                <option value="Vélo d'appartement">Vélo d'appartement</option>
+                <option value="Gym douce">Gym douce</option>
+                <option value="VTT">VTT</option>
+                <option value="Route">Route</option>
+                <option value="Baby vélo">Baby vélo</option>
+                <option value="Décrassage">Décrassage</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="blankStatus">Statut</label>
+              <select id="blankStatus">
+                <option value="Planifiée">Planifiée</option>
+                <option value="Réalisée">Réalisée</option>
+                <option value="À modifier">À modifier</option>
+                <option value="Annulée">Annulée</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="blankRepetition">Répétition</label>
+              <select id="blankRepetition">
+                <option value="Une seule fois">Une seule fois</option>
+                <option value="Chaque semaine">Chaque semaine</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="blankWeeks">Nombre de semaines</label>
+              <input id="blankWeeks" type="number" min="1" step="1" value="1">
+            </div>
+            <div class="field">
+              <label for="blankCoach">Encadrant</label>
+              <select id="blankCoach">
+                <option value="">À renseigner</option>
+                <option value="Arthur">Arthur</option>
+                <option value="Florian">Florian</option>
+                <option value="Arthur et Florian">Arthur et Florian</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="blankIntensity">Niveau d'intensité</label>
+              <select id="blankIntensity">
+                <option value="">À renseigner</option>
+                <option value="1">1 / 10 - Très facile</option>
+                <option value="2">2 / 10 - Facile</option>
+                <option value="3">3 / 10 - Modéré léger</option>
+                <option value="4">4 / 10 - Modéré</option>
+                <option value="5">5 / 10 - Soutenu</option>
+                <option value="6">6 / 10 - Soutenu +</option>
+                <option value="7">7 / 10 - Difficile</option>
+                <option value="8">8 / 10 - Très difficile</option>
+                <option value="9">9 / 10 - Quasi maximal</option>
+                <option value="10">10 / 10 - Maximal</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="blankGoal">But / objectif de la séance</label>
+            <input id="blankGoal" type="text" placeholder="Objectif principal de la séance">
+          </div>
+          <div class="field">
+            <label for="blankMaterial">Matériel</label>
+            <input id="blankMaterial" type="text" placeholder="Vélos, plots, tapis, salle...">
+          </div>
+          <div class="field">
+            <label for="blankInstructions">Descriptif / consignes</label>
+            <textarea id="blankInstructions" placeholder="Déroulé, consignes de sécurité, adaptations, retour au calme..."></textarea>
+          </div>
+          <div class="field">
+            <label for="blankComment">Commentaire de la séance</label>
+            <textarea id="blankComment" placeholder="Ressenti, comportement du groupe, difficultés, adaptations à prévoir, bilan personnel..."></textarea>
+          </div>
+          <div class="result-panel">
+            <h3>Résultat de séance</h3>
+            <div class="result-grid">
+              <div class="field">
+                <label for="blankResultTime">Temps</label>
+                <input id="blankResultTime" type="number" min="0" step="1" inputmode="decimal" placeholder="min">
+              </div>
+              <div class="field">
+                <label for="blankResultDistance">Distance</label>
+                <input id="blankResultDistance" type="number" min="0" step="0.01" inputmode="decimal" placeholder="km">
+              </div>
+              <div class="field">
+                <label for="blankResultProgram">Programme</label>
+                <input id="blankResultProgram" type="number" min="0" step="1" inputmode="numeric" placeholder="n°">
+              </div>
+              <div class="field">
+                <label for="blankResultResistance">Résistance</label>
+                <input id="blankResultResistance" type="number" min="0" step="1" inputmode="numeric" placeholder="niveau">
+              </div>
+            </div>
+          </div>
+          <p class="inline-message" id="blankMessage"></p>
+          <div class="blank-actions">
+            <button class="app-btn secondary" type="button" id="resetBlankSession">Vider la fiche</button>
+            <button class="app-btn primary" type="button" id="saveBlankSession">Enregistrer la séance</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 
-    <article class="panel">
-      <h2>Ajouter une séance ce jour</h2>
-      <p class="hint">Groupe, heure, descriptif, commentaire et résultats</p>
+  <section>
+    <h2>Détail par pôle</h2>
+    <div class="detail-grid">
+      <article class="card">
+        <h3>Sport santé</h3>
+        <ul>
+          <li>Lundi : 19h00 - 20h00, Arthur</li>
+          <li>Mardi matin : 9h00 - 12h00, Florian</li>
+          <li>Mardi après-midi : 14h00 - 17h00, Arthur</li>
+          <li>Jeudi matin : 9h00 - 11h30, vélo d'appartement, Arthur</li>
+          <li>Jeudi après-midi : 14h00 - 16h00, gym douce, Florian</li>
+          <li>Jeudi soir : 17h30 - 18h30, sport santé, Arthur</li>
+          <li>Vendredi matin : 10h00 - 12h00, vélo d'appartement, Florian</li>
+          <li>Vendredi après-midi : 14h00 - 16h00, gym douce, Arthur</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>École de vélo</h3>
+        <ul>
+          <li>Mardi : 14h00 - 17h00, baby vélo, enfants, Arthur et Florian</li>
+          <li>Mercredi matin : 10h00 - 12h00, U7 / U9 VTT, enfants, Arthur</li>
+          <li>Mercredi matin : 10h00 - 12h00, U9 / U11 route, enfants, Florian</li>
+          <li>Mercredi après-midi : 14h00 - 17h00, U13 / U15, ados, Arthur et Florian</li>
+          <li>Mercredi après-midi : 14h00 - 17h00, U15 / U17, ados, Arthur et Florian</li>
+          <li>Samedi matin : 9h30 - 11h30, VTT U13 et +, Florian</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Structures / établissements</h3>
+        <ul>
+          <li>Lundi : Bethléem 9h30 - 11h30, seniors, Arthur</li>
+          <li>Lundi : Villa 10h00 - 11h00, seniors, Florian</li>
+          <li>Lundi : FAM 14h00 - 17h00, seniors, Arthur et Florian</li>
+          <li>Jeudi : Verneuil 15h00 - 17h00, seniors, Arthur</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>Récupération / décrassage</h3>
+        <ul>
+          <li>Samedi après-midi : 16h30 - 17h00, décrassage, Arthur</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tableau synthétique</h2>
+    <table>
+      <thead>
+        <tr><th>Jour</th><th>Horaire</th><th>Activité</th><th>Public / catégorie</th><th>Pôle</th><th>Encadrant</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Lundi</td><td>9h30 - 11h30</td><td>Bethléem</td><td>Seniors</td><td>Structure</td><td>Arthur</td></tr>
+        <tr><td>Lundi</td><td>10h00 - 11h00</td><td>Villa</td><td>Seniors</td><td>Structure</td><td>Florian</td></tr>
+        <tr><td>Lundi</td><td>14h00 - 17h00</td><td>FAM</td><td>Seniors</td><td>Structure</td><td>Arthur et Florian</td></tr>
+        <tr><td>Lundi</td><td>19h00 - 20h00</td><td>Sport santé</td><td>Seniors</td><td>Sport santé</td><td>Arthur</td></tr>
+        <tr><td>Mardi</td><td>9h00 - 12h00</td><td>Sport santé</td><td>Seniors</td><td>Sport santé</td><td>Florian</td></tr>
+        <tr><td>Mardi</td><td>14h00 - 17h00</td><td>Baby vélo</td><td>Enfants</td><td>École de vélo</td><td>Arthur et Florian</td></tr>
+        <tr><td>Mardi</td><td>14h00 - 17h00</td><td>Sport santé</td><td>Seniors</td><td>Sport santé</td><td>Arthur</td></tr>
+        <tr><td>Mercredi</td><td>10h00 - 12h00</td><td>U7 / U9 VTT</td><td>Enfants</td><td>École de vélo</td><td>Arthur</td></tr>
+        <tr><td>Mercredi</td><td>10h00 - 12h00</td><td>U9 / U11 route</td><td>Enfants</td><td>École de vélo</td><td>Florian</td></tr>
+        <tr><td>Mercredi</td><td>14h00 - 17h00</td><td>U13 / U15 · U15 / U17</td><td>Ados</td><td>École de vélo / compétition</td><td>Arthur et Florian</td></tr>
+        <tr><td>Jeudi</td><td>9h00 - 11h30</td><td>Vélo d'appartement</td><td>Seniors</td><td>Sport santé</td><td>Arthur</td></tr>
+        <tr><td>Jeudi</td><td>14h00 - 16h00</td><td>Sport santé - gym douce</td><td>Seniors</td><td>Sport santé</td><td>Florian</td></tr>
+        <tr><td>Jeudi</td><td>15h00 - 17h00</td><td>Verneuil</td><td>Seniors</td><td>Structure</td><td>Arthur</td></tr>
+        <tr><td>Jeudi</td><td>17h30 - 18h30</td><td>Sport santé</td><td>Seniors</td><td>Sport santé</td><td>Arthur</td></tr>
+        <tr><td>Vendredi</td><td>10h00 - 12h00</td><td>Vélo d'appartement</td><td>Seniors</td><td>Sport santé</td><td>Florian</td></tr>
+        <tr><td>Vendredi</td><td>14h00 - 16h00</td><td>Sport santé - gym douce</td><td>Seniors</td><td>Sport santé</td><td>Arthur</td></tr>
+        <tr><td>Samedi</td><td>9h30 - 11h30</td><td>VTT U13 et +</td><td>Seniors</td><td>École de vélo / compétition</td><td>Florian</td></tr>
+        <tr><td>Samedi</td><td>16h30 - 17h00</td><td>Décrassage</td><td>Seniors</td><td>Récupération</td><td>Arthur</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Points à confirmer</h2>
+    <p class="note">
+      Pour finaliser le planning, il reste à préciser uniquement les ajustements éventuels d'encadrement selon les semaines.
+    </p>
+  </section>
+
+  <footer>
+    Planning structuré à partir des informations fournies · Club de vélo situé à Paray-le-Monial.
+  </footer>
+</main>
+
+<div class="modal-backdrop" id="sessionModal" aria-hidden="true">
+  <div class="session-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h2 id="modalTitle">Détail de séance</h2>
+      <p id="modalSubtitle"></p>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="sessionGoal">But / objectif de la séance</label>
+        <input id="sessionGoal" type="text" placeholder="Exemple : endurance douce, mobilité, aisance vélo">
+      </div>
       <div class="form-grid">
         <div class="field">
-          <label for="client">Groupe / public</label>
-          <input id="client" placeholder="Seniors, enfants, ados...">
+          <label for="sessionMaterial">Matériel</label>
+          <input id="sessionMaterial" type="text" placeholder="Vélos, plots, tapis, parcours, salle...">
         </div>
         <div class="field">
-          <label for="date">Date</label>
-          <input id="date" type="date">
-        </div>
-        <div class="field">
-          <label for="time">Heure</label>
-          <input id="time" type="time">
-        </div>
-        <div class="field">
-          <label for="duration">Durée</label>
-          <input id="duration" type="number" min="0" step="5" placeholder="60">
-        </div>
-        <div class="field">
-          <label for="activity">Type d'activité</label>
-          <select id="activity">
-            <option>Bethléem</option>
-            <option>Villa</option>
-            <option>FAM</option>
-            <option>Sport santé</option>
-            <option>Sport santé - gym douce</option>
-            <option>Vélo d'appartement</option>
-            <option>Gym douce</option>
-            <option>VTT</option>
-            <option>Route</option>
-            <option>Baby vélo</option>
-            <option>U7 / U9 VTT</option>
-            <option>U9 / U11 route</option>
-            <option>École de vélo U13 / U15 / U17</option>
-            <option>Verneuil</option>
-            <option>Décrassage</option>
-            <option>Autre</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="status">Statut</label>
-          <select id="status">
-            <option>Planifiée</option>
-            <option>Réalisée</option>
-            <option>À modifier</option>
-            <option>Annulée</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="coach">Encadrant</label>
-          <select id="coach">
-            <option value="">À renseigner</option>
-            <option>Arthur</option>
-            <option>Florian</option>
-            <option>Arthur et Florian</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="intensity">Intensité</label>
-          <select id="intensity">
+          <label for="sessionIntensity">Niveau d'intensité</label>
+          <select id="sessionIntensity">
             <option value="">À renseigner</option>
             <option value="1">1 / 10 - Très facile</option>
             <option value="2">2 / 10 - Facile</option>
@@ -194,44 +593,484 @@ button.danger{background:#fff1f8;color:var(--pink-dark)}
             <option value="10">10 / 10 - Maximal</option>
           </select>
         </div>
-        <div class="field">
-          <label for="repeatWeeks">Répétition</label>
-          <input id="repeatWeeks" type="number" min="1" step="1" value="1">
-        </div>
       </div>
       <div class="field">
-        <label for="goal">But / objectif</label>
-        <input id="goal" placeholder="Objectif principal de la séance">
+        <label for="sessionInstructions">Consignes</label>
+        <textarea id="sessionInstructions" placeholder="Échauffement, corps de séance, sécurité, adaptations, retour au calme..."></textarea>
       </div>
       <div class="field">
-        <label for="material">Matériel</label>
-        <input id="material" placeholder="Vélos, plots, tapis, salle...">
-      </div>
-      <div class="field">
-        <label for="instructions">Descriptif / consignes</label>
-        <textarea id="instructions" placeholder="Déroulé, sécurité, adaptations, retour au calme..."></textarea>
-      </div>
-      <div class="field">
-        <label for="comment">Commentaire de la séance</label>
-        <textarea id="comment" placeholder="Ressenti, comportement du groupe, bilan, adaptations à prévoir..."></textarea>
+        <label for="sessionComment">Commentaire de la séance</label>
+        <textarea id="sessionComment" placeholder="Ressenti, bilan, points à améliorer, réponse du groupe..."></textarea>
       </div>
       <div class="result-panel">
         <h3>Résultat de séance</h3>
         <div class="result-grid">
-          <div class="field"><label for="resultTime">Temps</label><input id="resultTime" type="number" min="0" step="1" placeholder="min"></div>
-          <div class="field"><label for="resultDistance">Distance</label><input id="resultDistance" type="number" min="0" step="0.01" placeholder="km"></div>
-          <div class="field"><label for="resultProgram">Programme</label><input id="resultProgram" type="number" min="0" step="1" placeholder="n°"></div>
-          <div class="field"><label for="resultResistance">Résistance</label><input id="resultResistance" type="number" min="0" step="1" placeholder="niveau"></div>
+          <div class="field">
+            <label for="resultTime">Temps</label>
+            <input id="resultTime" type="number" min="0" step="1" inputmode="decimal" placeholder="min">
+          </div>
+          <div class="field">
+            <label for="resultDistance">Distance</label>
+            <input id="resultDistance" type="number" min="0" step="0.01" inputmode="decimal" placeholder="km">
+          </div>
+          <div class="field">
+            <label for="resultProgram">Programme</label>
+            <input id="resultProgram" type="number" min="0" step="1" inputmode="numeric" placeholder="n°">
+          </div>
+          <div class="field">
+            <label for="resultResistance">Résistance</label>
+            <input id="resultResistance" type="number" min="0" step="1" inputmode="numeric" placeholder="niveau">
+          </div>
         </div>
       </div>
-      <p class="message" id="message"></p>
-      <div class="actions">
-        <button type="button" id="resetForm">Vider</button>
-        <button class="primary" type="button" id="saveSession">Enregistrer</button>
+    </div>
+    <p class="saved-message" id="savedMessage"></p>
+    <div class="modal-actions">
+      <button class="app-btn danger" type="button" id="deleteDetail">Effacer</button>
+      <button class="app-btn secondary" type="button" id="closeModal">Fermer</button>
+      <button class="app-btn primary" type="button" id="saveDetail">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "fred-club-velo-session-details-v1";
+  const BLANK_STORAGE_KEY = "fred-club-velo-blank-sessions-v1";
+  const WEEK_DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+  const WEEK_SHORT = ["lun", "mar", "mer", "jeu", "ven", "sam", "dim"];
+  const modal = document.getElementById("sessionModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalSubtitle = document.getElementById("modalSubtitle");
+  const goalInput = document.getElementById("sessionGoal");
+  const materialInput = document.getElementById("sessionMaterial");
+  const intensityInput = document.getElementById("sessionIntensity");
+  const instructionsInput = document.getElementById("sessionInstructions");
+  const commentInput = document.getElementById("sessionComment");
+  const resultTimeInput = document.getElementById("resultTime");
+  const resultDistanceInput = document.getElementById("resultDistance");
+  const resultProgramInput = document.getElementById("resultProgram");
+  const resultResistanceInput = document.getElementById("resultResistance");
+  const savedMessage = document.getElementById("savedMessage");
+  const saveButton = document.getElementById("saveDetail");
+  const closeButton = document.getElementById("closeModal");
+  const deleteButton = document.getElementById("deleteDetail");
+  const blankFields = {
+    client: document.getElementById("blankClient"),
+    date: document.getElementById("blankDate"),
+    time: document.getElementById("blankTime"),
+    duration: document.getElementById("blankDuration"),
+    activity: document.getElementById("blankActivity"),
+    status: document.getElementById("blankStatus"),
+    repetition: document.getElementById("blankRepetition"),
+    weeks: document.getElementById("blankWeeks"),
+    coach: document.getElementById("blankCoach"),
+    goal: document.getElementById("blankGoal"),
+    material: document.getElementById("blankMaterial"),
+    intensity: document.getElementById("blankIntensity"),
+    instructions: document.getElementById("blankInstructions"),
+    comment: document.getElementById("blankComment"),
+    resultTime: document.getElementById("blankResultTime"),
+    resultDistance: document.getElementById("blankResultDistance"),
+    resultProgram: document.getElementById("blankResultProgram"),
+    resultResistance: document.getElementById("blankResultResistance")
+  };
+  const blankMessage = document.getElementById("blankMessage");
+  const saveBlankButton = document.getElementById("saveBlankSession");
+  const resetBlankButton = document.getElementById("resetBlankSession");
+  const weekBoard = document.getElementById("weekBoard");
+  const calendarWeekTitle = document.getElementById("calendarWeekTitle");
+  const selectedDayTitle = document.getElementById("selectedDayTitle");
+  const selectedDayCount = document.getElementById("selectedDayCount");
+  const selectedDaySessions = document.getElementById("selectedDaySessions");
+  const prevWeekButton = document.getElementById("prevWeek");
+  const todayWeekButton = document.getElementById("todayWeek");
+  const nextWeekButton = document.getElementById("nextWeek");
+  let activeSlot = null;
+  let activeKey = "";
+  let currentWeekStart = null;
+  let selectedDate = null;
+
+  const loadDetails = () => {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    } catch {
+      return {};
+    }
+  };
+
+  const saveDetails = (details) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(details));
+  };
+
+  const loadBlankSessions = () => {
+    try {
+      return JSON.parse(localStorage.getItem(BLANK_STORAGE_KEY) || "[]");
+    } catch {
+      return [];
+    }
+  };
+
+  const saveBlankSessions = (sessions) => {
+    localStorage.setItem(BLANK_STORAGE_KEY, JSON.stringify(sessions));
+  };
+
+  const cleanText = (text) => text.replace(/\s+/g, " ").trim();
+
+  const escapeHtml = (text) => String(text || "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#039;"
+  }[char]));
+
+  const localISO = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const parseISODate = (iso) => {
+    const [year, month, day] = iso.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const addDays = (date, days) => {
+    const next = new Date(date);
+    next.setDate(next.getDate() + days);
+    return next;
+  };
+
+  const startOfWeek = (date) => {
+    const start = new Date(date);
+    const day = (start.getDay() + 6) % 7;
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - day);
+    return start;
+  };
+
+  const formatShortDate = (date) => `${date.getDate()}/${date.getMonth() + 1}`;
+
+  const formatNumericDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${day}/${month}/${date.getFullYear()}`;
+  };
+
+  const formatLongDate = (date) => date.toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  }).replace(/^./, (letter) => letter.toUpperCase());
+
+  const sameDay = (a, b) => localISO(a) === localISO(b);
+
+  const weekDates = () => WEEK_DAYS.map((_, index) => addDays(currentWeekStart, index));
+
+  const normalizedSessions = () => loadBlankSessions().map((session) => {
+    if (session.date) return session;
+    const index = Math.max(0, WEEK_DAYS.indexOf(session.day || "Lundi"));
+    return { ...session, date: localISO(addDays(currentWeekStart, index)) };
+  });
+
+  const getSlotInfo = (slot) => {
+    const day = slot.closest(".day")?.querySelector(".day-title")?.textContent || "";
+    const time = slot.querySelector(".time")?.textContent || "";
+    const activity = slot.querySelector(".activity")?.textContent || "";
+    const staff = Array.from(slot.querySelectorAll(".staff-line .tag")).map((tag) => tag.textContent).join(" et ");
+    const key = cleanText(`${day}|${time}|${activity}|${staff}`);
+    return { day: cleanText(day), time: cleanText(time), activity: cleanText(activity), staff: cleanText(staff), key };
+  };
+
+  const hasContent = (detail) => {
+    if (!detail) return false;
+    return Boolean([
+      detail.goal,
+      detail.material,
+      detail.intensity,
+      detail.instructions,
+      detail.comment,
+      detail.content,
+      detail.notes,
+      detail.resultTime,
+      detail.resultDistance,
+      detail.resultProgram,
+      detail.resultResistance
+    ].some((value) => cleanText(String(value || ""))));
+  };
+
+  const refreshSlotStates = () => {
+    const details = loadDetails();
+    document.querySelectorAll(".slot").forEach((slot) => {
+      const info = getSlotInfo(slot);
+      let state = slot.querySelector(".detail-state");
+      if (!state) {
+        state = document.createElement("span");
+        state.className = "detail-state";
+        slot.appendChild(state);
+      }
+      const filled = hasContent(details[info.key]);
+      slot.classList.toggle("has-detail", filled);
+      state.textContent = filled ? "Détail rempli" : "Ajouter détail";
+      slot.setAttribute("role", "button");
+      slot.setAttribute("tabindex", "0");
+      slot.setAttribute("aria-label", `${info.day} ${info.time} ${info.activity}. ${state.textContent}`);
+    });
+  };
+
+  const openModal = (slot) => {
+    const info = getSlotInfo(slot);
+    const detail = loadDetails()[info.key] || {};
+    activeSlot = slot;
+    activeKey = info.key;
+    modalTitle.textContent = info.activity;
+    modalSubtitle.textContent = `${info.day} · ${info.time}${info.staff ? " · " + info.staff : ""}`;
+    goalInput.value = detail.goal || "";
+    materialInput.value = detail.material || "";
+    intensityInput.value = detail.intensity || "";
+    instructionsInput.value = detail.instructions || detail.content || detail.notes || "";
+    commentInput.value = detail.comment || "";
+    resultTimeInput.value = detail.resultTime || "";
+    resultDistanceInput.value = detail.resultDistance || "";
+    resultProgramInput.value = detail.resultProgram || "";
+    resultResistanceInput.value = detail.resultResistance || "";
+    savedMessage.textContent = "";
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    setTimeout(() => goalInput.focus(), 0);
+  };
+
+  const closeModal = () => {
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    savedMessage.textContent = "";
+    if (activeSlot) activeSlot.focus();
+  };
+
+  const saveActiveDetail = () => {
+    const details = loadDetails();
+    details[activeKey] = {
+      goal: goalInput.value.trim(),
+      material: materialInput.value.trim(),
+      intensity: intensityInput.value,
+      instructions: instructionsInput.value.trim(),
+      comment: commentInput.value.trim(),
+      resultTime: resultTimeInput.value,
+      resultDistance: resultDistanceInput.value,
+      resultProgram: resultProgramInput.value,
+      resultResistance: resultResistanceInput.value,
+      updatedAt: new Date().toISOString()
+    };
+    saveDetails(details);
+    refreshSlotStates();
+    savedMessage.textContent = "Séance enregistrée.";
+  };
+
+  const deleteActiveDetail = () => {
+    const details = loadDetails();
+    delete details[activeKey];
+    saveDetails(details);
+    goalInput.value = "";
+    materialInput.value = "";
+    intensityInput.value = "";
+    instructionsInput.value = "";
+    commentInput.value = "";
+    resultTimeInput.value = "";
+    resultDistanceInput.value = "";
+    resultProgramInput.value = "";
+    resultResistanceInput.value = "";
+    refreshSlotStates();
+    savedMessage.textContent = "Détail effacé.";
+  };
+
+  const resetBlankForm = () => {
+    Object.entries(blankFields).forEach(([key, field]) => {
+      if (key === "date") field.value = localISO(selectedDate);
+      else if (key === "weeks") field.value = "1";
+      else if (key === "status") field.value = "Planifiée";
+      else if (key === "repetition") field.value = "Une seule fois";
+      else field.value = "";
+    });
+    blankMessage.textContent = "";
+  };
+
+  const selectDate = (date) => {
+    selectedDate = new Date(date);
+    blankFields.date.value = localISO(selectedDate);
+    if (startOfWeek(selectedDate).getTime() !== currentWeekStart.getTime()) {
+      currentWeekStart = startOfWeek(selectedDate);
+    }
+    renderCalendar();
+  };
+
+  const getBlankFormData = () => ({
+    id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    date: blankFields.date.value,
+    day: formatLongDate(parseISODate(blankFields.date.value)).split(" ")[0],
+    client: blankFields.client.value.trim(),
+    time: blankFields.time.value.trim(),
+    duration: blankFields.duration.value,
+    activity: blankFields.activity.value.trim(),
+    status: blankFields.status.value,
+    repetition: blankFields.repetition.value,
+    weeks: blankFields.weeks.value,
+    coach: blankFields.coach.value,
+    goal: blankFields.goal.value.trim(),
+    material: blankFields.material.value.trim(),
+    intensity: blankFields.intensity.value,
+    instructions: blankFields.instructions.value.trim(),
+    comment: blankFields.comment.value.trim(),
+    resultTime: blankFields.resultTime.value,
+    resultDistance: blankFields.resultDistance.value,
+    resultProgram: blankFields.resultProgram.value,
+    resultResistance: blankFields.resultResistance.value,
+    createdAt: new Date().toISOString()
+  });
+
+  const sessionsForDate = (iso) => normalizedSessions()
+    .filter((session) => session.date === iso)
+    .sort((a, b) => String(a.time || "").localeCompare(String(b.time || "")));
+
+  const renderCalendar = () => {
+    const dates = weekDates();
+    const todayIso = localISO(new Date());
+    calendarWeekTitle.textContent = `Semaine du ${formatNumericDate(dates[0])} au ${formatNumericDate(dates[6])}`;
+    weekBoard.innerHTML = dates.map((date, index) => {
+      const iso = localISO(date);
+      const sessions = sessionsForDate(iso);
+      return `
+        <article class="week-day ${sameDay(date, selectedDate) ? "selected" : ""} ${iso === todayIso ? "today" : ""}" data-date="${iso}">
+          <div class="week-day-head">
+            <span>${WEEK_SHORT[index]}</span>
+            <span class="week-day-date">${formatShortDate(date)}</span>
+          </div>
+          <div class="week-day-content">
+            ${sessions.length ? sessions.map((session) => `
+              <div class="calendar-session">
+                <strong>${escapeHtml(session.time || "--:--")} · ${escapeHtml(session.activity || "Séance")}</strong>
+                <span>${escapeHtml(session.client || session.coach || "Groupe à préciser")}</span>
+              </div>
+            `).join("") : `<div class="free-box">Libre</div>`}
+          </div>
+        </article>
+      `;
+    }).join("");
+    renderSelectedDay();
+  };
+
+  const renderSelectedDay = () => {
+    const iso = localISO(selectedDate);
+    const sessions = sessionsForDate(iso);
+    selectedDayTitle.textContent = formatLongDate(selectedDate);
+    selectedDayCount.textContent = `${sessions.length} séance${sessions.length > 1 ? "s" : ""} ce jour`;
+    if (!sessions.length) {
+      selectedDaySessions.innerHTML = `<div class="free-box">Aucune séance ce jour</div>`;
+      return;
+    }
+    selectedDaySessions.innerHTML = sessions.map((session) => `
+      <div class="day-session-card">
+        <strong>${escapeHtml(session.time || "--:--")} · ${escapeHtml(session.activity || "Séance sans titre")}</strong>
+        <p>${escapeHtml(session.client || "Groupe à préciser")}${session.duration ? ` · ${escapeHtml(session.duration)} min` : ""}${session.status ? ` · ${escapeHtml(session.status)}` : ""}</p>
+        ${session.coach ? `<p><b>Encadrant :</b> ${escapeHtml(session.coach)}</p>` : ""}
+        ${session.goal ? `<p><b>Objectif :</b> ${escapeHtml(session.goal)}</p>` : ""}
+        ${session.instructions ? `<p><b>Descriptif :</b> ${escapeHtml(session.instructions)}</p>` : ""}
+        ${session.comment ? `<p><b>Commentaire :</b> ${escapeHtml(session.comment)}</p>` : ""}
+        ${session.resultTime || session.resultDistance || session.resultProgram || session.resultResistance ? `<p><b>Résultats :</b> ${escapeHtml(session.resultTime || "-")} min · ${escapeHtml(session.resultDistance || "-")} km · prog. ${escapeHtml(session.resultProgram || "-")} · résistance ${escapeHtml(session.resultResistance || "-")}</p>` : ""}
+        <button type="button" data-delete-blank="${escapeHtml(session.id)}">Supprimer</button>
       </div>
-    </article>
-  </section>
-</main>
-<script src="app.js"></script>
+    `).join("");
+  };
+
+  const moveWeek = (amount) => {
+    currentWeekStart = addDays(currentWeekStart, amount * 7);
+    selectedDate = addDays(selectedDate, amount * 7);
+    blankFields.date.value = localISO(selectedDate);
+    renderCalendar();
+  };
+
+  const saveBlankSession = () => {
+    const session = getBlankFormData();
+    if (!session.client && !session.activity && !session.goal && !session.instructions && !session.comment) {
+      blankMessage.textContent = "Ajoute au moins un groupe, une activité, un objectif, un descriptif ou un commentaire avant d'enregistrer.";
+      return;
+    }
+    const sessions = loadBlankSessions();
+    const repeatCount = session.repetition === "Chaque semaine" ? Math.max(1, Number(session.weeks || 1)) : 1;
+    for (let index = 0; index < repeatCount; index += 1) {
+      const sessionDate = addDays(parseISODate(session.date), index * 7);
+      sessions.push({
+        ...session,
+        id: `${Date.now()}-${index}-${Math.random().toString(16).slice(2)}`,
+        date: localISO(sessionDate),
+        day: formatLongDate(sessionDate).split(" ")[0]
+      });
+    }
+    saveBlankSessions(sessions);
+    renderCalendar();
+    resetBlankForm();
+    blankMessage.textContent = repeatCount > 1 ? `${repeatCount} séances enregistrées.` : "Séance enregistrée.";
+  };
+
+  const deleteBlankSession = (id) => {
+    const sessions = loadBlankSessions().filter((session) => session.id !== id);
+    saveBlankSessions(sessions);
+    renderCalendar();
+    blankMessage.textContent = "Séance supprimée.";
+  };
+
+  document.querySelector(".grid").addEventListener("click", (event) => {
+    const slot = event.target.closest(".slot");
+    if (slot) openModal(slot);
+  });
+
+  document.querySelector(".grid").addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const slot = event.target.closest(".slot");
+    if (!slot) return;
+    event.preventDefault();
+    openModal(slot);
+  });
+
+  saveButton.addEventListener("click", saveActiveDetail);
+  closeButton.addEventListener("click", closeModal);
+  deleteButton.addEventListener("click", deleteActiveDetail);
+  saveBlankButton.addEventListener("click", saveBlankSession);
+  resetBlankButton.addEventListener("click", resetBlankForm);
+  weekBoard.addEventListener("click", (event) => {
+    const day = event.target.closest("[data-date]");
+    if (day) selectDate(parseISODate(day.dataset.date));
+  });
+  blankFields.date.addEventListener("change", () => {
+    if (blankFields.date.value) selectDate(parseISODate(blankFields.date.value));
+  });
+  selectedDaySessions.addEventListener("click", (event) => {
+    const deleteButton = event.target.closest("[data-delete-blank]");
+    if (deleteButton) deleteBlankSession(deleteButton.getAttribute("data-delete-blank"));
+  });
+  prevWeekButton.addEventListener("click", () => moveWeek(-1));
+  todayWeekButton.addEventListener("click", () => {
+    selectedDate = new Date();
+    currentWeekStart = startOfWeek(selectedDate);
+    blankFields.date.value = localISO(selectedDate);
+    renderCalendar();
+  });
+  nextWeekButton.addEventListener("click", () => moveWeek(1));
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && modal.classList.contains("open")) closeModal();
+  });
+
+  selectedDate = new Date();
+  currentWeekStart = startOfWeek(selectedDate);
+  blankFields.date.value = localISO(selectedDate);
+  refreshSlotStates();
+  renderCalendar();
+})();
+</script>
 </body>
 </html>
