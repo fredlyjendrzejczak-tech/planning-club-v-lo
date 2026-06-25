@@ -1,5 +1,39 @@
 const WEEK_DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 const WEEK_SHORT = ["lun", "mar", "mer", "jeu", "ven", "sam", "dim"];
+const MAIN_PLANNING = [
+  [
+    { time: "09:30", duration: "120", activity: "Bethléem", client: "Seniors", type: "Structure", coach: "Arthur" },
+    { time: "10:00", duration: "60", activity: "Villa", client: "Seniors", type: "Structure", coach: "Florian" },
+    { time: "14:00", duration: "180", activity: "FAM", client: "Seniors", type: "Structure", coach: "Arthur et Florian" },
+    { time: "19:00", duration: "60", activity: "Sport santé", client: "Seniors", type: "Sport santé", coach: "Arthur" }
+  ],
+  [
+    { time: "09:00", duration: "180", activity: "Sport santé", client: "Seniors", type: "Sport santé", coach: "Florian" },
+    { time: "14:00", duration: "90", activity: "Baby vélo", client: "Enfants", type: "École de vélo", coach: "Arthur" },
+    { time: "14:00", duration: "180", activity: "Sport santé", client: "Seniors", type: "Sport santé", coach: "Arthur" },
+    { time: "16:00", duration: "60", activity: "Baby vélo", client: "Enfants", type: "École de vélo", coach: "Florian" }
+  ],
+  [
+    { time: "10:00", duration: "120", activity: "U7 / U9 VTT", client: "Enfants", type: "École de vélo", coach: "Arthur" },
+    { time: "10:00", duration: "120", activity: "U9 / U11 route", client: "Enfants", type: "École de vélo", coach: "Florian" },
+    { time: "14:00", duration: "180", activity: "École de vélo U13 / U15 / U17", client: "Ados", type: "École de vélo / compétition", coach: "Arthur et Florian" }
+  ],
+  [
+    { time: "09:00", duration: "150", activity: "Vélo d'appartement", client: "Seniors", type: "Sport santé", coach: "Arthur" },
+    { time: "14:00", duration: "120", activity: "Sport santé - gym douce", client: "Seniors", type: "Sport santé", coach: "Florian" },
+    { time: "15:00", duration: "120", activity: "Verneuil", client: "Seniors", type: "Structure", coach: "Arthur" },
+    { time: "17:30", duration: "60", activity: "Sport santé", client: "Seniors", type: "Sport santé", coach: "Arthur" }
+  ],
+  [
+    { time: "10:00", duration: "120", activity: "Vélo d'appartement", client: "Seniors", type: "Sport santé", coach: "Florian" },
+    { time: "14:00", duration: "120", activity: "Sport santé - gym douce", client: "Seniors", type: "Sport santé", coach: "Arthur" }
+  ],
+  [
+    { time: "09:30", duration: "120", activity: "VTT U13 et +", client: "Ados", type: "École de vélo / compétition", coach: "Florian" },
+    { time: "16:30", duration: "30", activity: "Décrassage", client: "Seniors", type: "Récupération", coach: "Arthur" }
+  ],
+  []
+];
 let sessions = [];
 let selectedDate = new Date();
 let weekStart = startOfWeek(selectedDate);
@@ -98,6 +132,16 @@ function sessionsForDate(iso) {
     .sort((a, b) => String(a.time || "").localeCompare(String(b.time || "")));
 }
 
+function plannedSessionsForDate(date) {
+  const dayIndex = (date.getDay() + 6) % 7;
+  const iso = localISO(date);
+  return (MAIN_PLANNING[dayIndex] || []).map((session, index) => ({
+    ...session,
+    date: iso,
+    planIndex: `${iso}-${index}`
+  }));
+}
+
 function weekDates() {
   return WEEK_DAYS.map((_, index) => addDays(weekStart, index));
 }
@@ -111,6 +155,7 @@ function render() {
 
   els.weekBoard.innerHTML = dates.map((date, index) => {
     const iso = localISO(date);
+    const plannedSessions = plannedSessionsForDate(date);
     const daySessions = sessionsForDate(iso);
     return `
       <article class="day ${iso === selectedIso ? "selected" : ""} ${iso === todayIso ? "today" : ""}" data-date="${iso}">
@@ -119,12 +164,19 @@ function render() {
           <span class="day-date">${date.getDate()}/${date.getMonth() + 1}</span>
         </div>
         <div class="day-body">
-          ${daySessions.length ? daySessions.map(session => `
-            <div class="session-pill">
+          ${plannedSessions.map(session => `
+            <button class="session-pill planned" type="button" data-date="${iso}" data-plan="${escapeHtml(session.planIndex)}">
+              <strong>${escapeHtml(session.time)} · ${escapeHtml(session.activity)}</strong>
+              <span>${escapeHtml(session.client)} · ${escapeHtml(session.coach)}</span>
+            </button>
+          `).join("")}
+          ${daySessions.map(session => `
+            <div class="session-pill detailed">
               <strong>${escapeHtml(session.time || "--:--")} · ${escapeHtml(session.activity || "Séance")}</strong>
-              <span>${escapeHtml(session.client || session.coach || "Groupe à préciser")}</span>
+              <span>Détail enregistré · ${escapeHtml(session.client || session.coach || "Groupe à préciser")}</span>
             </div>
-          `).join("") : `<div class="free">Libre</div>`}
+          `).join("")}
+          ${!plannedSessions.length && !daySessions.length ? `<div class="free">Libre</div>` : ""}
         </div>
       </article>
     `;
@@ -135,17 +187,28 @@ function render() {
 
 function renderSelectedDay() {
   const iso = localISO(selectedDate);
+  const plannedSessions = plannedSessionsForDate(selectedDate);
   const daySessions = sessionsForDate(iso);
   els.selectedTitle.textContent = formatLong(selectedDate);
-  els.selectedCount.textContent = `${daySessions.length} séance${daySessions.length > 1 ? "s" : ""} ce jour`;
+  const totalCount = plannedSessions.length + daySessions.length;
+  els.selectedCount.textContent = `${totalCount} séance${totalCount > 1 ? "s" : ""} ce jour`;
   els.fields.date.value = iso;
 
-  if (!daySessions.length) {
+  if (!plannedSessions.length && !daySessions.length) {
     els.selectedSessions.innerHTML = `<div class="free">Aucune séance ce jour</div>`;
     return;
   }
 
-  els.selectedSessions.innerHTML = daySessions.map(session => `
+  els.selectedSessions.innerHTML = `
+    ${plannedSessions.map(session => `
+      <div class="session-card planned-card">
+        <strong>${escapeHtml(session.time)} · ${escapeHtml(session.activity)}</strong>
+        <p><b>Public :</b> ${escapeHtml(session.client)} · <b>Type :</b> ${escapeHtml(session.type)}</p>
+        <p><b>Encadrant :</b> ${escapeHtml(session.coach)}</p>
+        <button class="primary" type="button" data-plan="${escapeHtml(session.planIndex)}">Renseigner le détail</button>
+      </div>
+    `).join("")}
+    ${daySessions.map(session => `
     <div class="session-card">
       <strong>${escapeHtml(session.time || "--:--")} · ${escapeHtml(session.activity || "Séance sans titre")}</strong>
       <p>${escapeHtml(session.client || "Groupe à préciser")}${session.duration ? ` · ${escapeHtml(session.duration)} min` : ""}${session.status ? ` · ${escapeHtml(session.status)}` : ""}</p>
@@ -157,7 +220,8 @@ function renderSelectedDay() {
       ${session.resultTime || session.resultDistance || session.resultProgram || session.resultResistance ? `<p><b>Résultats :</b> ${escapeHtml(session.resultTime || "-")} min · ${escapeHtml(session.resultDistance || "-")} km · prog. ${escapeHtml(session.resultProgram || "-")} · résistance ${escapeHtml(session.resultResistance || "-")}</p>` : ""}
       <button class="danger" type="button" data-delete="${escapeHtml(session.id)}">Supprimer</button>
     </div>
-  `).join("");
+    `).join("")}
+  `;
 }
 
 function formDataFor(date, index = 0) {
@@ -190,6 +254,25 @@ function resetForm() {
     else field.value = "";
   });
   els.message.textContent = "";
+}
+
+function fillFormFromPlan(planIndex) {
+  const plan = plannedSessionsForDate(selectedDate).find(session => session.planIndex === planIndex);
+  if (!plan) return;
+  els.fields.client.value = plan.client;
+  els.fields.date.value = plan.date;
+  els.fields.time.value = plan.time;
+  els.fields.duration.value = plan.duration;
+  els.fields.activity.value = plan.activity;
+  els.fields.coach.value = plan.coach;
+  els.fields.status.value = "Planifiée";
+  els.fields.repeatWeeks.value = "1";
+  els.fields.goal.value = "";
+  els.fields.material.value = "";
+  els.fields.instructions.value = "";
+  els.fields.comment.value = "";
+  els.message.textContent = `Détail prêt à compléter pour ${plan.activity}.`;
+  document.querySelector(".workspace")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 async function saveSession() {
@@ -239,6 +322,12 @@ document.getElementById("nextWeek").addEventListener("click", () => {
 });
 
 els.weekBoard.addEventListener("click", event => {
+  const planButton = event.target.closest("[data-plan]");
+  if (planButton) {
+    selectDate(parseISO(planButton.dataset.date));
+    fillFormFromPlan(planButton.dataset.plan);
+    return;
+  }
   const day = event.target.closest("[data-date]");
   if (day) selectDate(parseISO(day.dataset.date));
 });
@@ -248,6 +337,11 @@ els.fields.date.addEventListener("change", () => {
 });
 
 els.selectedSessions.addEventListener("click", event => {
+  const planButton = event.target.closest("[data-plan]");
+  if (planButton) {
+    fillFormFromPlan(planButton.dataset.plan);
+    return;
+  }
   const button = event.target.closest("[data-delete]");
   if (button) deleteSession(button.dataset.delete);
 });
