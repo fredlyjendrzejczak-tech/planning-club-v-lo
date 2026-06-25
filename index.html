@@ -139,6 +139,11 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
 .app-btn.secondary{background:#eef4ff;color:var(--blue-dark)}
 .app-btn.danger{background:#fff1f8;color:var(--pink-dark)}
 .saved-message{min-height:20px;margin:0 24px 16px;color:var(--pink-dark);font-weight:850}
+.main-tabs{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:18px 40px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:4}
+.main-tab{border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--blue-dark);font-weight:950;padding:11px 16px;cursor:pointer;box-shadow:0 8px 20px rgba(16,42,92,.05)}
+.main-tab.active{background:linear-gradient(90deg,var(--blue),var(--pink));border-color:transparent;color:#fff;box-shadow:0 12px 28px rgba(15,111,255,.2)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
 @media(max-width:1000px){
   .grid{grid-template-columns:repeat(2,1fr)}
   .detail-grid{grid-template-columns:1fr}
@@ -149,6 +154,8 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
 @media(max-width:640px){
   .page{margin:0}
   header,section,footer{padding:22px}
+  .main-tabs{padding:14px 22px;position:static}
+  .main-tab{flex:1 1 100%;text-align:center}
   .grid{grid-template-columns:1fr}
   h1{font-size:30px}
   .modal-head,.modal-body,.modal-actions{padding-left:18px;padding-right:18px}
@@ -162,6 +169,8 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
 @media print{
   body{background:#fff}
   .page{margin:0;max-width:none;box-shadow:none}
+  .main-tabs{display:none}
+  .tab-panel{display:block}
   section{break-inside:avoid}
 }
 </style>
@@ -185,7 +194,13 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
     </div>
   </header>
 
-  <section>
+  <nav class="main-tabs" aria-label="Navigation du planning">
+    <button class="main-tab active" type="button" data-tab="week">Vue semaine</button>
+    <button class="main-tab" type="button" data-tab="sessions">Planning séance</button>
+    <button class="main-tab" type="button" data-tab="poles">Détail par pôles</button>
+  </nav>
+
+  <section class="tab-panel active" data-tab-panel="week">
     <h2>Vue semaine</h2>
     <div class="grid">
       <article class="day">
@@ -322,7 +337,7 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
     </div>
   </section>
 
-  <section>
+  <section class="tab-panel" data-tab-panel="sessions">
     <h2>Planning des séances</h2>
     <div class="coach-calendar">
       <div class="calendar-top">
@@ -480,7 +495,7 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
     </div>
   </section>
 
-  <section>
+  <section class="tab-panel" data-tab-panel="poles">
     <h2>Détail par pôle</h2>
     <div class="detail-grid">
       <article class="card">
@@ -525,7 +540,7 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
     </div>
   </section>
 
-  <section>
+  <section class="tab-panel" data-tab-panel="poles">
     <h2>Tableau synthétique</h2>
     <table>
       <thead>
@@ -554,7 +569,7 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
     </table>
   </section>
 
-  <section>
+  <section class="tab-panel" data-tab-panel="poles">
     <h2>Points à confirmer</h2>
     <p class="note">
       Pour finaliser le planning, il reste à préciser uniquement les ajustements éventuels d'encadrement selon les semaines.
@@ -691,10 +706,23 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
   const prevWeekButton = document.getElementById("prevWeek");
   const todayWeekButton = document.getElementById("todayWeek");
   const nextWeekButton = document.getElementById("nextWeek");
+  const mainTabs = Array.from(document.querySelectorAll(".main-tab"));
+  const tabPanels = Array.from(document.querySelectorAll("[data-tab-panel]"));
   let activeSlot = null;
   let activeKey = "";
   let currentWeekStart = null;
   let selectedDate = null;
+
+  const showTab = (tabName) => {
+    mainTabs.forEach((button) => {
+      const active = button.dataset.tab === tabName;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    tabPanels.forEach((panel) => {
+      panel.classList.toggle("active", panel.dataset.tabPanel === tabName);
+    });
+  };
 
   const loadDetails = () => {
     try {
@@ -1054,6 +1082,9 @@ footer{padding:22px 40px;background:linear-gradient(90deg,#f8fbff,#fff1f8);color
   selectedDaySessions.addEventListener("click", (event) => {
     const deleteButton = event.target.closest("[data-delete-blank]");
     if (deleteButton) deleteBlankSession(deleteButton.getAttribute("data-delete-blank"));
+  });
+  mainTabs.forEach((button) => {
+    button.addEventListener("click", () => showTab(button.dataset.tab));
   });
   prevWeekButton.addEventListener("click", () => moveWeek(-1));
   todayWeekButton.addEventListener("click", () => {
